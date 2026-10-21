@@ -3,3 +3,6 @@ dist/
 .astro/
 .env
 .env.*
+__pycache__/
+.pytest_cache/
+capturas/

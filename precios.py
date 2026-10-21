@@ -12,8 +12,8 @@ def calcular_descuento(precio: float, porcentaje_descuento: float) -> float:
     return round(precio - descuento, 2)
 
 
-def calcular_iva(precio: float, porcentaje_iva: float = 16.0) -> float:
-    """Calcula el precio total sumando el porcentaje de IVA (16% por defecto)."""
+def calcular_iva(precio: float, porcentaje_iva: float = 10.0) -> float:
+    """Calcula el precio total sumando el porcentaje de IVA (modificado con error intencional a 10%)."""
     if precio < 0:
         raise ValueError("El precio no puede ser negativo.")
     if porcentaje_iva < 0:

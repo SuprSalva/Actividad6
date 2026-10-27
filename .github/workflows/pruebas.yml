@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  pruebas:
-    name: Ejecutar pytest
+  unitarias:
+    name: Pruebas unitarias
     runs-on: ubuntu-latest
 
     steps:
@@ -23,5 +23,45 @@ jobs:
       - name: Instalar pytest
         run: python -m pip install --upgrade pip pytest
 
-      - name: Ejecutar set de pruebas con pytest
-        run: pytest -v
+      - name: Ejecutar pruebas unitarias
+        run: pytest -v test_precios.py
+
+  integracion:
+    name: Pruebas de integración
+    needs: unitarias
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar pytest
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Ejecutar pruebas de integración
+        run: pytest -v test_integration.py
+
+  sistema:
+    name: Pruebas de sistema
+    needs: integracion
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar pytest
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Ejecutar pruebas de sistema
+        run: pytest -v system.py

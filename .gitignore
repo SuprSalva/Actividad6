@@ -6,3 +6,10 @@ dist/
 __pycache__/
 .pytest_cache/
 capturas/
+
+# Build del paquete de Python
+.venv/
+.venv-build/
+*.pyc
+*.egg-info/
+build/

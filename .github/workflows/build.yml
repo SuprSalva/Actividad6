@@ -1,0 +1,74 @@
+name: Build Python
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Construir paquete
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar herramienta Build
+        run: python -m pip install build
+
+      - name: Construir paquete
+        run: python -m build
+
+      - name: Mostrar distribuciones
+        run: ls -l dist/
+
+      - name: Guardar distribuciones
+        uses: actions/upload-artifact@v4
+        with:
+          name: paquete-tienda
+          path: dist/
+          if-no-files-found: error
+
+  verificar:
+    name: Verificar paquete instalado
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Este trabajo no descarga el repositorio: solo usa el wheel construido,
+      # así se comprueba que el paquete funciona por sí solo.
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Descargar distribuciones
+        uses: actions/download-artifact@v4
+        with:
+          name: paquete-tienda
+          path: dist/
+
+      - name: Instalar wheel construido
+        run: python -m pip install dist/*.whl
+
+      - name: Verificar instalacion
+        shell: bash
+        run: |
+          python -c "from precios import calcular_precio_final; assert calcular_precio_final(100, 20) == 92.8"
+
+          salida=$(tienda 100 20)
+          echo "$salida"
+          test "$salida" = 'Precio final: $92.80'
+
+          # Con datos inválidos el comando debe terminar con error (código 1)
+          if tienda 100 120; then
+            echo "El comando debía fallar con un descuento de 120%"
+            exit 1
+          fi
+          echo "Datos inválidos rechazados correctamente"

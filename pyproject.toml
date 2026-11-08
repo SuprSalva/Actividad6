@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tienda-precios"
+version = "1.0.0"
+description = "Programa de tienda: calcula el precio final de una venta con descuento e IVA"
+requires-python = ">=3.10"
+authors = [{ name = "SuprSalva" }]
+
+[project.scripts]
+# Comando que queda instalado con el paquete: tienda <precio> <descuento> [iva]
+tienda = "main:main"
+
+[tool.setuptools]
+# El programa son dos módulos sueltos en la raíz (no una carpeta src/ con paquete),
+# porque así los usan las pruebas y el flujo pruebas.yml de las actividades anteriores.
+py-modules = ["precios", "main"]
